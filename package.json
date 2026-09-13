@@ -1,0 +1,26 @@
+{
+  "name": "auto-apply-engine",
+  "version": "1.0.0",
+  "description": "Job application auto-fill engine in TypeScript with Playwright",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "tsx src/server.ts",
+    "dev": "tsx src/server.ts",
+    "dev:headed": "HEADED=true npm run dev",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx tests/mapper.test.ts && tsx tests/lever.test.ts && tsx tests/engine.test.ts",
+    "test:mapper": "tsx tests/mapper.test.ts",
+    "test:lever": "tsx tests/lever.test.ts",
+    "test:engine": "tsx tests/engine.test.ts"
+  },
+  "keywords": ["playwright", "ats", "job-application", "lever"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "playwright": "^1.42.0",
+    "tsx": "^4.7.1",
+    "typescript": "^5.3.3"
+  }
+}
