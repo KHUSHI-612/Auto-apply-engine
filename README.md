@@ -35,7 +35,8 @@ npm test
 ## ATS Platform Support
 
 * **Lever (`jobs.lever.co`)**: **Fully implemented and tested.** Handles form discovery, field extraction across multiple input types (text, email, phone, select dropdowns, radio button groups, checkboxes), file upload, EEO decline defaults, and confirmation detection against both mock ATS servers and live `jobs.lever.co/leverdemo` postings. Reference implementation: [`src/adapters/lever.ts`](src/adapters/lever.ts).
-* **Greenhouse / Ashby / Workable**: The system uses an extensible `AtsAdapter` interface and pluggable registry pattern ([`src/adapters/registry.ts`](src/adapters/registry.ts)). Adding support for Greenhouse, Ashby, or Workable requires adding a single adapter file conforming to the `AtsAdapter` contract (`openForm`, `readFields`, `fillField`, `uploadResume`, `submit`). These are not yet implemented due to project time constraints.
+* **Greenhouse (`job-boards.greenhouse.io` / `boards.greenhouse.io`)**: **Fully implemented and tested.** Supports both direct-hosted boards and iframe-embedded careers portals (`iframe#grnhse_iframe`). Handles modern Remix boards with React-Select dropdowns (`input.select__input`, `.select__control`, `.select__option`) as well as classic Greenhouse `<select>` structures. Tested end-to-end against real Databricks postings (`job-boards.greenhouse.io/databricks/jobs/...`). Reference implementation: [`src/adapters/greenhouse.ts`](src/adapters/greenhouse.ts).
+* **Ashby / Workable**: The system uses an extensible `AtsAdapter` interface and pluggable registry pattern ([`src/adapters/registry.ts`](src/adapters/registry.ts)). Adding support for Ashby or Workable requires adding a single adapter file conforming to the `AtsAdapter` contract (`openForm`, `readFields`, `fillField`, `uploadResume`, `submit`).
 
 ---
 
