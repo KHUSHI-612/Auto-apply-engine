@@ -174,6 +174,7 @@ export const greenhouseAdapter: AtsAdapter = {
       }> = [];
 
       const processedRadioNames = new Set<string>();
+      const processedCheckboxNames = new Set<string>();
 
       // Select all candidate inputs, selects, textareas inside the Greenhouse form
       const elements = Array.from(
@@ -261,6 +262,79 @@ export const greenhouseAdapter: AtsAdapter = {
             id: radioName,
             label: labelText.replace(/[\u2731\u2732\u2733*✱]/g, "").replace(/\s+/g, " ").trim(),
             type: "radio",
+            required: isRequired,
+            options,
+          });
+          continue;
+        }
+
+        // Checkbox groups sharing a name (e.g. question_...[])
+        const cbName = el.getAttribute("name");
+        const isCheckboxGroup =
+          inputType === "checkbox" &&
+          cbName &&
+          (cbName.endsWith("[]") ||
+            form.querySelectorAll(`input[type="checkbox"][name="${CSS.escape(cbName)}"]`).length > 1);
+
+        if (isCheckboxGroup && cbName) {
+          if (processedCheckboxNames.has(cbName)) continue;
+          processedCheckboxNames.add(cbName);
+
+          const groupCheckboxes = Array.from(
+            form.querySelectorAll<HTMLInputElement>(`input[type="checkbox"][name="${CSS.escape(cbName)}"]`)
+          );
+
+          const fieldset =
+            el.closest("fieldset.checkbox") ||
+            el.closest(".field-wrapper") ||
+            el.closest(".field") ||
+            el.closest("fieldset");
+          const legendEl = fieldset?.querySelector("legend, label.checkbox__description, .label");
+
+          let labelText = "";
+          let isRequired = fieldset?.getAttribute("aria-required") === "true";
+
+          if (legendEl) {
+            if (
+              legendEl.textContent?.includes("*") ||
+              legendEl.querySelector(".required, [aria-hidden='true']")?.textContent?.includes("*")
+            ) {
+              isRequired = true;
+            }
+            const clone = legendEl.cloneNode(true) as HTMLElement;
+            clone.querySelectorAll(".required, [aria-hidden='true']").forEach((s) => s.remove());
+            labelText = clone.textContent || "";
+          }
+
+          if (!labelText) {
+            labelText = cbName;
+          }
+
+          const options: string[] = [];
+          for (const cb of groupCheckboxes) {
+            if (cb.required) isRequired = true;
+            let optText = "";
+            if (cb.id) {
+              const explicit = form.querySelector(`label[for="${CSS.escape(cb.id)}"]`);
+              optText = explicit?.textContent?.trim() || "";
+            }
+            if (!optText) {
+              const parentLabel = cb.closest("label");
+              optText = parentLabel?.textContent?.trim() || "";
+            }
+            if (!optText) {
+              optText = cb.value;
+            }
+            const cleaned = optText.replace(/\s+/g, " ").trim();
+            if (cleaned && !options.includes(cleaned)) {
+              options.push(cleaned);
+            }
+          }
+
+          results.push({
+            id: cbName,
+            label: labelText.replace(/[\u2731\u2732\u2733*✱]/g, "").replace(/\s+/g, " ").trim(),
+            type: "checkbox",
             required: isRequired,
             options,
           });
@@ -506,16 +580,147 @@ export const greenhouseAdapter: AtsAdapter = {
             }
           }
 
-          // Fallback: type value directly into combobox input and press Enter
+          // Fallback: if value was asking to decline/opt-out, search for any decline/opt-out option in the list
+          if (!chosen && /decline|not to answer|not wish|prefer not/i.test(value)) {
+            for (let i = 0; i < optionCount; i++) {
+              const opt = optionCandidates.nth(i);
+              const optText = (await opt.textContent().catch(() => ""))?.trim() || "";
+              if (/decline|not to answer|not wish|prefer not/i.test(optText)) {
+                await opt.click();
+                chosen = true;
+                break;
+              }
+            }
+          }
+
           if (!chosen) {
-            await selectEl.fill(value).catch(() => {});
-            await selectEl.press("Enter").catch(() => {});
+            // Close the opened react-select menu cleanly with Escape
+            await page.keyboard.press("Escape").catch(() => {});
           }
         }
         break;
       }
 
       case "checkbox": {
+        // 1. Check if there is a group of checkboxes sharing this name (e.g. question_...[])
+        const groupCheckboxes = context.locator(`input[type="checkbox"][name="${escapedId}"]`);
+        const groupCount = await groupCheckboxes.count().catch(() => 0);
+
+        if (groupCount > 1) {
+          const targetValues = value.split(",").map((v) => v.trim().toLowerCase());
+          let anyMatched = false;
+
+          for (let i = 0; i < groupCount; i++) {
+            const cb = groupCheckboxes.nth(i);
+            const cbId = await cb.getAttribute("id");
+            let optionText = "";
+            if (cbId) {
+              const labelEl = context.locator(`label[for="${escapeCssAttr(cbId)}"]`);
+              optionText = (await labelEl.textContent().catch(() => ""))?.trim() || "";
+            }
+            if (!optionText) {
+              const parentLabel = cb.locator("xpath=ancestor::label[1]");
+              optionText = (await parentLabel.textContent().catch(() => ""))?.trim() || "";
+            }
+
+            const lowerOpt = optionText.toLowerCase();
+            const shouldCheck = targetValues.some(
+              (v) => v === lowerOpt || lowerOpt.includes(v) || (v.length > 5 && lowerOpt.startsWith(v.slice(0, 10)))
+            );
+
+            if (shouldCheck) {
+              const isChecked = await cb.isChecked().catch(() => false);
+              if (!isChecked) {
+                let clicked = false;
+                if (cbId) {
+                  const labelEl = context.locator(`label[for="${escapeCssAttr(cbId)}"]`);
+                  if (await labelEl.isVisible().catch(() => false)) {
+                    await labelEl.scrollIntoViewIfNeeded().catch(() => {});
+                    await labelEl.click();
+                    clicked = true;
+                  }
+                }
+                if (!clicked) {
+                  await cb.scrollIntoViewIfNeeded().catch(() => {});
+                  await cb.click({ force: true });
+                }
+              }
+              anyMatched = true;
+            } else {
+              const isChecked = await cb.isChecked().catch(() => false);
+              if (isChecked) {
+                let clicked = false;
+                if (cbId) {
+                  const labelEl = context.locator(`label[for="${escapeCssAttr(cbId)}"]`);
+                  if (await labelEl.isVisible().catch(() => false)) {
+                    await labelEl.scrollIntoViewIfNeeded().catch(() => {});
+                    await labelEl.click();
+                    clicked = true;
+                  }
+                }
+                if (!clicked) {
+                  await cb.scrollIntoViewIfNeeded().catch(() => {});
+                  await cb.click({ force: true });
+                }
+              }
+            }
+          }
+
+          if (!anyMatched) {
+            // If value is truthy (e.g. "yes", "true") and no specific option text was given,
+            // select the safe non-conflicting default like "None of the above" or "Not applicable" if available
+            let chosenIndex = 0;
+            for (let i = 0; i < groupCount; i++) {
+              const cb = groupCheckboxes.nth(i);
+              const cbId = await cb.getAttribute("id");
+              const labelText = cbId
+                ? (await context.locator(`label[for="${escapeCssAttr(cbId)}"]`).textContent().catch(() => "")) || ""
+                : "";
+              if (/none of the above|not applicable|none of these/i.test(labelText)) {
+                chosenIndex = i;
+                break;
+              }
+            }
+            const chosenCb = groupCheckboxes.nth(chosenIndex);
+            const chosenId = await chosenCb.getAttribute("id");
+            const isChecked = await chosenCb.isChecked().catch(() => false);
+            if (!isChecked) {
+              let clicked = false;
+              if (chosenId) {
+                const labelEl = context.locator(`label[for="${escapeCssAttr(chosenId)}"]`);
+                if (await labelEl.isVisible().catch(() => false)) {
+                  await labelEl.scrollIntoViewIfNeeded().catch(() => {});
+                  await labelEl.click();
+                  clicked = true;
+                }
+              }
+              if (!clicked) {
+                await chosenCb.scrollIntoViewIfNeeded().catch(() => {});
+                await chosenCb.click({ force: true });
+              }
+            }
+          }
+
+          // In HTML5 checkbox groups: when at least one option is checked, remove the required
+          // attribute from the unchecked siblings in the group so browser validation passes
+          await context.evaluate((name) => {
+            const cbs = Array.from(
+              document.querySelectorAll(`input[type="checkbox"][name="${CSS.escape(name)}"]`)
+            ) as HTMLInputElement[];
+            const hasChecked = cbs.some((c) => c.checked);
+            if (hasChecked) {
+              cbs.forEach((c) => {
+                if (!c.checked) {
+                  c.required = false;
+                  c.removeAttribute("required");
+                }
+              });
+            }
+          }, field.id).catch(() => {});
+          break;
+        }
+
+        // 2. Standalone checkbox (e.g. consent, terms)
         const checkboxEl = targetLocator.first();
         await checkboxEl.scrollIntoViewIfNeeded().catch(() => {});
         const truthy =
@@ -663,6 +868,22 @@ export const greenhouseAdapter: AtsAdapter = {
 
     const currentUrl = page.url();
 
+    // Ensure all checked checkbox groups don't have unchecked siblings with required="" blocking form validation
+    await context.evaluate(() => {
+      const fieldsets = Array.from(document.querySelectorAll("fieldset.checkbox, fieldset"));
+      fieldsets.forEach((fs) => {
+        const cbs = Array.from(fs.querySelectorAll('input[type="checkbox"]')) as HTMLInputElement[];
+        if (cbs.some((c) => c.checked)) {
+          cbs.forEach((c) => {
+            if (!c.checked) {
+              c.required = false;
+              c.removeAttribute("required");
+            }
+          });
+        }
+      });
+    }).catch(() => {});
+
     // Trigger form submit
     await submitButton.click();
 
@@ -718,14 +939,29 @@ export const greenhouseAdapter: AtsAdapter = {
     }
 
     // 2. Check if submission was blocked by validation errors
-    const errorEl = context.locator(".error, .field-error, .invalid, [class*='errorMessage'], [id*='-error']").first();
-    if (await errorEl.isVisible().catch(() => false)) {
-      const errorText = await errorEl.textContent().catch(() => "");
-      if (errorText && errorText.trim().length > 0) {
-        throw new Error(
-          `Form submission failed with validation error: '${errorText.trim()}'.`
-        );
+    const errorLocator = context.locator(".error, .field-error, .invalid, [class*='errorMessage'], [id*='-error']");
+    const errorCount = await errorLocator.count().catch(() => 0);
+    const visibleErrors: string[] = [];
+    for (let i = 0; i < errorCount; i++) {
+      const el = errorLocator.nth(i);
+      if (await el.isVisible().catch(() => false)) {
+        const info = await el.evaluate((node) => ({
+          tag: node.tagName,
+          id: node.id,
+          className: node.className,
+          text: node.textContent?.trim(),
+          parent: node.parentElement?.id || node.parentElement?.className,
+        })).catch(() => null);
+        if (info && info.text) {
+          visibleErrors.push(`[${info.id || info.className || info.tag}] ${info.text}`);
+        }
       }
+    }
+
+    if (visibleErrors.length > 0) {
+      throw new Error(
+        `Form submission failed with validation error: ${visibleErrors.join(" | ")}.`
+      );
     }
 
     // 3. Extract confirmation text
