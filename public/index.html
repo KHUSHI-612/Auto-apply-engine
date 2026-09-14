@@ -3,34 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Auto-Apply Engine Dashboard | Intelligent ATS Automation</title>
+  <title>Auto-Apply Engine Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-primary: #0b0f19;
-      --bg-secondary: #111827;
-      --bg-card: rgba(17, 24, 39, 0.75);
-      --bg-glass: rgba(255, 255, 255, 0.04);
-      --border-color: rgba(255, 255, 255, 0.09);
-      --border-focus: #6366f1;
-      --accent-primary: #6366f1;
-      --accent-secondary: #8b5cf6;
-      --accent-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-      --text-primary: #f9fafb;
-      --text-secondary: #9ca3af;
-      --text-muted: #6b7280;
-      --success: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --info: #3b82f6;
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
-      --radius-full: 9999px;
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
-      --shadow-lg: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(99, 102, 241, 0.15);
+      --bg-canvas: #f8fafc;
+      --bg-surface: #ffffff;
+      --border-subtle: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --accent-blue: #2563eb;
+      --accent-blue-hover: #1d4ed8;
+      --accent-blue-subtle: #eff6ff;
+      --accent-blue-border: #bfdbfe;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-soft: #94a3b8;
+      --status-success-bg: #f0fdf4;
+      --status-success-text: #15803d;
+      --status-success-border: #bbf7d0;
+      --status-warn-bg: #fffbeb;
+      --status-warn-text: #b45309;
+      --status-warn-border: #fde68a;
+      --status-error-bg: #fef2f2;
+      --status-error-text: #b91c1c;
+      --status-error-border: #fecaca;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
     }
 
     * {
@@ -41,37 +43,34 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
+      background-color: var(--bg-canvas);
+      color: var(--text-main);
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
       line-height: 1.5;
-      background-image: 
-        radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
-        radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.12) 0%, transparent 40%);
-      background-attachment: fixed;
     }
 
-    /* Top Nav */
+    /* Clean Navbar */
     header {
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      background: rgba(11, 15, 25, 0.8);
-      border-bottom: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
       position: sticky;
       top: 0;
-      z-index: 50;
+      z-index: 40;
+      flex-shrink: 0;
     }
 
-    .nav-container {
-      max-width: 1280px;
+    .nav-inner {
+      max-width: 1240px;
       margin: 0 auto;
-      padding: 16px 24px;
+      padding: 14px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .brand {
+    .nav-brand {
       display: flex;
       align-items: center;
       gap: 12px;
@@ -79,642 +78,1034 @@
       color: inherit;
     }
 
-    .brand-logo {
-      width: 36px;
-      height: 36px;
-      border-radius: var(--radius-md);
-      background: var(--accent-gradient);
+    .nav-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-blue);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 16px rgba(99, 102, 241, 0.5);
     }
 
-    .brand-logo svg {
-      width: 20px;
-      height: 20px;
+    .nav-logo svg {
+      width: 18px;
+      height: 18px;
       fill: #fff;
     }
 
-    .brand-text h1 {
-      font-size: 1.15rem;
+    .nav-title {
+      font-size: 1.05rem;
       font-weight: 700;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.01em;
     }
 
-    .brand-text span {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    .nav-actions {
+    .nav-meta {
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    .badge-status {
+    .status-pill {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      background: var(--status-success-bg);
+      color: var(--status-success-text);
+      border: 1px solid var(--status-success-border);
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.75rem;
-      padding: 4px 10px;
-      border-radius: var(--radius-full);
-      background: rgba(16, 185, 129, 0.12);
-      color: var(--success);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      font-weight: 500;
     }
 
-    .badge-dot {
+    .status-dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
       background: currentColor;
-      box-shadow: 0 0 8px currentColor;
     }
 
-    /* Main Content */
+    .nav-link {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      transition: all 0.15s;
+    }
+
+    .nav-link:hover {
+      color: var(--text-main);
+      border-color: var(--border-strong);
+      background: #f8fafc;
+    }
+
+    /* Layout */
     main {
-      max-width: 1280px;
+      max-width: 1240px;
+      width: 100%;
       margin: 0 auto;
-      padding: 32px 24px;
+      padding: 24px 24px 32px;
       display: grid;
       grid-template-columns: 1.15fr 0.85fr;
-      gap: 28px;
+      gap: 24px;
+      flex: 1;
+      align-items: stretch;
+      box-sizing: border-box;
     }
 
-    @media (max-width: 960px) {
+    section {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    @media (max-width: 980px) {
       main {
         grid-template-columns: 1fr;
       }
     }
 
-    /* Cards */
+    /* Clean Card Container */
     .card {
-      background: var(--bg-card);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
       padding: 24px;
-      box-shadow: var(--shadow-sm);
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    .card:hover {
-      border-color: rgba(255, 255, 255, 0.15);
+      box-shadow: var(--shadow-card);
+      box-sizing: border-box;
     }
 
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
-    .card-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .card-heading {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
     }
 
-    .card-title svg {
-      width: 20px;
-      height: 20px;
-      color: var(--accent-primary);
-    }
-
-    /* Form Inputs */
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
-    }
-
-    .input-field, .textarea-field, .select-field {
-      width: 100%;
-      background: rgba(15, 23, 42, 0.7);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      padding: 10px 14px;
-      font-family: inherit;
-      font-size: 0.9rem;
-      color: var(--text-primary);
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-
-    .input-field:focus, .textarea-field:focus, .select-field:focus {
-      outline: none;
-      border-color: var(--border-focus);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-    }
-
-    .textarea-field {
-      resize: vertical;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.82rem;
-      min-height: 140px;
-    }
-
-    /* Presets row */
-    .presets-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .preset-btn {
-      background: var(--bg-glass);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-full);
-      padding: 4px 12px;
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .preset-btn:hover {
-      background: rgba(99, 102, 241, 0.15);
-      border-color: var(--accent-primary);
-      color: #fff;
-    }
-
-    /* Action Buttons */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 20px;
-      border-radius: var(--radius-md);
-      font-family: inherit;
-      font-size: 0.92rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s;
-    }
-
-    .btn-primary {
-      background: var(--accent-gradient);
-      color: #fff;
-      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
-      width: 100%;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      box-shadow: 0 6px 24px rgba(99, 102, 241, 0.6);
-      transform: translateY(-1px);
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .btn-secondary {
-      background: var(--bg-glass);
-      border: 1px solid var(--border-color);
-      color: var(--text-primary);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    /* Live Output & Console */
-    .console-card {
-      background: #070a12;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      padding: 14px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
-      color: #38bdf8;
-      max-height: 200px;
-      overflow-y: auto;
-      margin-top: 16px;
-      white-space: pre-wrap;
-    }
-
-    /* Runs list */
-    .runs-list {
+    /* Form Styles */
+    #applyForm {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      max-height: 520px;
-      overflow-y: auto;
-      padding-right: 4px;
     }
 
-    .run-item {
-      background: rgba(15, 23, 42, 0.5);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      padding: 14px;
-      cursor: pointer;
-      transition: all 0.15s;
+    .form-group {
+      margin-bottom: 18px;
     }
 
-    .run-item:hover, .run-item.active {
-      border-color: var(--accent-primary);
-      background: rgba(99, 102, 241, 0.08);
-    }
-
-    .run-item-header {
+    .form-label-row {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: baseline;
       margin-bottom: 6px;
     }
 
-    .run-id {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--text-primary);
+    label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-main);
     }
 
-    .run-badge {
-      font-size: 0.7rem;
-      padding: 2px 8px;
-      border-radius: var(--radius-full);
+    .label-meta {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    .input-field {
+      width: 100%;
+      background: #fff;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      font-family: inherit;
+      font-size: 0.88rem;
+      color: var(--text-main);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    /* URL input with detector */
+    .url-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .url-badge {
+      position: absolute;
+      right: 8px;
+      font-size: 0.72rem;
       font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--accent-blue-subtle);
+      color: var(--accent-blue);
+      border: 1px solid var(--accent-blue-border);
+      pointer-events: none;
+    }
+
+    /* Preset Chips */
+    .preset-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .preset-chip {
+      background: #f1f5f9;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+      font-size: 0.73rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .preset-chip:hover {
+      background: var(--accent-blue-subtle);
+      border-color: var(--accent-blue-border);
+      color: var(--accent-blue);
+    }
+
+    /* Clean Single-Card Resume Selector */
+    .resume-card {
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      background: #fafafa;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .resume-card.drag-target {
+      border-color: var(--accent-blue);
+      background: var(--accent-blue-subtle);
+    }
+
+    .resume-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .pdf-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      background: #fee2e2;
+      color: #b91c1c;
+      padding: 4px 6px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .resume-text {
+      min-width: 0;
+    }
+
+    .resume-title {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .resume-meta {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .resume-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .btn-action {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      border: 1px solid var(--border-strong);
+      background: #fff;
+      color: var(--text-main);
+      transition: all 0.15s;
+    }
+
+    .btn-action:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+
+    .select-resume {
+      font-size: 0.75rem;
+      padding: 5px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: #fff;
+      color: var(--text-main);
+      max-width: 180px;
+    }
+
+    /* Candidate Profile Section */
+    .profile-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 12px;
+      gap: 4px;
+    }
+
+    .tab-item {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      padding: 6px 12px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+
+    .tab-item.active {
+      color: var(--accent-blue);
+      border-bottom-color: var(--accent-blue);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .grid-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .grid-cell label {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .grid-input {
+      font-size: 0.84rem;
+      padding: 7px 10px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      background: #fff;
+      font-family: inherit;
+    }
+
+    .grid-input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+    }
+
+    .textarea-field {
+      width: 100%;
+      min-height: 140px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      padding: 10px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      background: #fafafa;
+      resize: vertical;
+    }
+
+    /* Primary Submit Button */
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--accent-blue);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-top: 16px;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      background: var(--accent-blue-hover);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Runs List */
+    .runs-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .run-card {
+      background: #fff;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 11px 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .run-card:hover, .run-card.selected {
+      border-color: var(--accent-blue);
+      background: var(--accent-blue-subtle);
+    }
+
+    .run-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .run-id-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
       text-transform: uppercase;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.02em;
     }
 
     .badge-SUBMITTED {
-      background: rgba(16, 185, 129, 0.15);
-      color: var(--success);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-
-    .badge-NEEDS_INPUT {
-      background: rgba(245, 158, 11, 0.15);
-      color: var(--warning);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      animation: pulse-warn 2s infinite;
+      background: var(--status-success-bg);
+      color: var(--status-success-text);
+      border: 1px solid var(--status-success-border);
     }
 
     .badge-FAILED {
-      background: rgba(239, 68, 68, 0.15);
-      color: var(--danger);
-      border: 1px solid rgba(239, 68, 68, 0.3);
+      background: var(--status-error-bg);
+      color: var(--status-error-text);
+      border: 1px solid var(--status-error-border);
+    }
+
+    .badge-NEEDS_INPUT {
+      background: var(--status-warn-bg);
+      color: var(--status-warn-text);
+      border: 1px solid var(--status-warn-border);
     }
 
     .badge-RUNNING {
-      background: rgba(59, 130, 246, 0.15);
-      color: var(--info);
-      border: 1px solid rgba(59, 130, 246, 0.3);
+      background: var(--accent-blue-subtle);
+      color: var(--accent-blue);
+      border: 1px solid var(--accent-blue-border);
     }
 
-    @keyframes pulse-warn {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
-    }
-
-    .run-meta {
-      font-size: 0.75rem;
+    .run-card-bottom {
+      font-size: 0.72rem;
       color: var(--text-muted);
       display: flex;
       justify-content: space-between;
     }
 
-    /* Modal for NEEDS_INPUT questions */
-    .modal-overlay {
+    /* Run Detail Section */
+    .detail-panel {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .detail-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .alert-banner {
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      margin-bottom: 14px;
+    }
+
+    .alert-error {
+      background: var(--status-error-bg);
+      color: var(--status-error-text);
+      border: 1px solid var(--status-error-border);
+    }
+
+    .alert-success {
+      background: var(--status-success-bg);
+      color: var(--status-success-text);
+      border: 1px solid var(--status-success-border);
+    }
+
+    .receipt-tbl {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+      margin-top: 8px;
+    }
+
+    .receipt-tbl th, .receipt-tbl td {
+      padding: 7px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .receipt-tbl th {
+      color: var(--text-muted);
+      background: #f8fafc;
+      font-weight: 600;
+    }
+
+    .receipt-tbl td:first-child {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      width: 40%;
+    }
+
+    .trace-row {
+      padding: 8px 10px;
+      background: #f8fafc;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      margin-bottom: 6px;
+      font-size: 0.76rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-screenshot {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+      background: var(--accent-blue-subtle);
+      border: 1px solid var(--accent-blue-border);
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-screenshot:hover {
+      background: #dbeafe;
+    }
+
+    /* Live Output Console */
+    .console-box {
+      background: #0f172a;
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: #38bdf8;
+      max-height: 180px;
+      overflow-y: auto;
+      margin-top: 14px;
+      white-space: pre-wrap;
+    }
+
+    /* Lightbox Modal */
+    .modal-backdrop {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      z-index: 100;
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 100;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.2s;
     }
 
-    .modal-overlay.open {
+    .modal-backdrop.active {
       opacity: 1;
       pointer-events: auto;
     }
 
-    .modal-content {
-      background: #111827;
-      border: 1px solid var(--border-color);
+    .modal-box {
+      background: #fff;
       border-radius: var(--radius-lg);
-      max-width: 580px;
+      max-width: 540px;
       width: 90%;
       max-height: 85vh;
       overflow-y: auto;
-      padding: 28px;
-      box-shadow: var(--shadow-lg);
-      animation: modal-enter 0.25s ease-out;
+      padding: 24px;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.2);
     }
 
-    @keyframes modal-enter {
-      from { transform: scale(0.94); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+    .lightbox-img-box {
+      max-width: 85vw;
+      max-height: 85vh;
+      background: #fff;
+      border-radius: var(--radius-md);
+      overflow: hidden;
     }
 
-    .modal-header {
-      margin-bottom: 20px;
-    }
-
-    .modal-header h3 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--warning);
-    }
-
-    .modal-header p {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      margin-top: 4px;
-    }
-
-    .modal-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-      margin-top: 24px;
-    }
-
-    /* Details Panel */
-    .details-section {
-      margin-top: 24px;
-    }
-
-    .receipt-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8rem;
-      margin-top: 10px;
-    }
-
-    .receipt-table th, .receipt-table td {
-      padding: 8px 12px;
-      text-align: left;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .receipt-table th {
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    .receipt-table td:first-child {
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-secondary);
-      width: 40%;
-    }
-
-    .trace-item {
-      padding: 8px 12px;
-      background: rgba(15, 23, 42, 0.4);
-      border-radius: var(--radius-sm);
-      margin-bottom: 8px;
-      font-size: 0.78rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .screenshot-thumb {
-      max-height: 48px;
-      border-radius: 4px;
-      border: 1px solid var(--border-color);
-      cursor: pointer;
-    }
-
-    /* Spinner */
-    .spinner {
-      width: 18px;
-      height: 18px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .lightbox-img {
+      max-width: 100%;
+      max-height: calc(85vh - 50px);
+      display: block;
     }
   </style>
 </head>
 <body>
 
+  <!-- Minimalist Navbar -->
   <header>
-    <div class="nav-container">
-      <a href="/" class="brand">
-        <div class="brand-logo">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <div class="nav-logo">
           <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
         </div>
-        <div class="brand-text">
-          <h1>Auto-Apply Engine</h1>
-          <span>Autonomous ATS Form Filling & Orchestration</span>
-        </div>
+        <span class="nav-title">Auto-Apply Engine</span>
       </a>
-      <div class="nav-actions">
-        <div class="badge-status">
-          <span class="badge-dot"></span>
-          Engine Online & Ready
+
+      <div class="nav-meta">
+        <div class="status-pill">
+          <span class="status-dot"></span>
+          Engine Active
         </div>
-        <a href="/mock-ats/lever/posting" target="_blank" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.8rem;">
-          View Mock Lever ATS ↗
-        </a>
+        <a href="/mock-ats/lever/posting" target="_blank" class="nav-link">Mock Lever ATS</a>
       </div>
     </div>
   </header>
 
+  <!-- Main Content -->
   <main>
-    <!-- Left Column: Application Trigger & Profile -->
+    <!-- Left Column: Setup & Trigger -->
     <section>
       <div class="card">
         <div class="card-header">
-          <div class="card-title">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            Trigger Job Application
-          </div>
+          <h2 class="card-heading">Application Setup</h2>
         </div>
 
         <form id="applyForm">
+          <!-- Target Job Posting URL -->
           <div class="form-group">
-            <label for="jobUrl">Job Posting URL</label>
-            <input 
-              id="jobUrl" 
-              class="input-field" 
-              type="url" 
-              required 
-              value="http://localhost:3000/mock-ats/lever/posting"
-              placeholder="https://jobs.lever.co/company/job-id"
-            />
-            <div class="presets-bar">
-              <span style="font-size: 0.75rem; color: var(--text-muted); align-self: center;">Presets:</span>
-              <button type="button" class="preset-btn" onclick="setJobUrl('http://localhost:3000/mock-ats/lever/posting')">
-                Mock Lever (Posting w/ Apply Btn)
+            <div class="form-label-row">
+              <label for="jobUrl">Target Job Posting URL</label>
+              <span class="label-meta">Lever and Greenhouse supported</span>
+            </div>
+
+            <div class="url-wrapper">
+              <input 
+                id="jobUrl" 
+                class="input-field" 
+                type="url" 
+                required 
+                value="http://localhost:3000/mock-ats/lever/posting"
+                placeholder="https://jobs.lever.co/... or https://job-boards.greenhouse.io/..."
+                oninput="detectAts(this.value)"
+              />
+              <span id="atsBadge" class="url-badge">Lever Adapter</span>
+            </div>
+
+            <div class="preset-chips">
+              <button type="button" class="preset-chip" onclick="setJobUrl('http://localhost:3000/mock-ats/lever/posting')">
+                Mock Lever (Standard)
               </button>
-              <button type="button" class="preset-btn" onclick="setJobUrl('http://localhost:3000/mock-ats/lever/apply')">
-                Mock Lever (Direct /apply)
+              <button type="button" class="preset-chip" onclick="setJobUrl('http://localhost:3000/mock-ats/lever/apply?withQuestions=true')">
+                Mock Lever (Screeners)
               </button>
-              <button type="button" class="preset-btn" onclick="setJobUrl('http://localhost:3000/mock-ats/lever/apply?withQuestions=true')">
-                Mock Lever (Screener Questions - Tests Needs Input)
+              <button type="button" class="preset-chip" onclick="setJobUrl('https://jobs.lever.co/leverdemo/82fbbecc-5535-466b-a84b-7957cf49e443/apply')">
+                Live Lever Demo
+              </button>
+              <button type="button" class="preset-chip" onclick="setJobUrl('https://job-boards.greenhouse.io/databricks/jobs/8701067002')">
+                Live Greenhouse (Databricks)
               </button>
             </div>
           </div>
 
+          <!-- Unified Resume Document Card -->
           <div class="form-group">
-            <label for="resumePath">Resume PDF File Path</label>
-            <input 
-              id="resumePath" 
-              class="input-field" 
-              type="text" 
-              required 
-              value="./sample_resume.pdf"
-            />
+            <div class="form-label-row">
+              <label>Candidate Resume Document</label>
+              <span class="label-meta">Drag & drop or select PDF</span>
+            </div>
+
+            <div id="resumeDropCard" class="resume-card">
+              <div class="resume-info">
+                <span class="pdf-badge">PDF</span>
+                <div class="resume-text">
+                  <div id="activeResumeTitle" class="resume-title">sample_resume.pdf (Default)</div>
+                  <div id="activeResumeMeta" class="resume-meta">694 bytes • Ready for ATS upload</div>
+                </div>
+              </div>
+
+              <div class="resume-controls">
+                <select id="resumeDropdown" class="select-resume" onchange="onSelectResume(this.value)">
+                  <option value="./sample_resume.pdf">Default sample_resume.pdf</option>
+                </select>
+                <button type="button" class="btn-action" onclick="document.getElementById('fileUploadInput').click()">
+                  Upload PDF
+                </button>
+                <input type="file" id="fileUploadInput" style="display: none;" accept=".pdf" onchange="uploadResumeFile(this.files)" />
+              </div>
+            </div>
+
+            <input id="resumePath" type="hidden" value="./sample_resume.pdf" />
           </div>
 
+          <!-- Candidate Profile -->
           <div class="form-group">
-            <label for="profileJson">Candidate Profile (JSON)</label>
-            <textarea id="profileJson" class="textarea-field" spellcheck="false"></textarea>
+            <div class="form-label-row">
+              <label>Candidate Profile</label>
+              <div class="profile-tabs">
+                <button type="button" id="tabBtnVisual" class="tab-item active" onclick="setProfileTab('visual')">Visual Form</button>
+                <button type="button" id="tabBtnJson" class="tab-item" onclick="setProfileTab('json')">JSON</button>
+              </div>
+            </div>
+
+            <div id="panelVisual">
+              <div class="form-grid">
+                <div class="grid-cell">
+                  <label>Full Name</label>
+                  <input id="inFullName" type="text" class="grid-input" value="Alex Morgan Rivera" oninput="syncFormToJson()" />
+                </div>
+                <div class="grid-cell">
+                  <label>Email Address</label>
+                  <input id="inEmail" type="email" class="grid-input" value="alex.rivera@example.com" oninput="syncFormToJson()" />
+                </div>
+                <div class="grid-cell">
+                  <label>Phone Number</label>
+                  <input id="inPhone" type="text" class="grid-input" value="+1-415-555-2671" oninput="syncFormToJson()" />
+                </div>
+                <div class="grid-cell">
+                  <label>Location</label>
+                  <input id="inLocation" type="text" class="grid-input" value="San Francisco, CA" oninput="syncFormToJson()" />
+                </div>
+                <div class="grid-cell">
+                  <label>LinkedIn URL</label>
+                  <input id="inLinkedIn" type="url" class="grid-input" value="https://linkedin.com/in/alexrivera" oninput="syncFormToJson()" />
+                </div>
+                <div class="grid-cell">
+                  <label>GitHub URL</label>
+                  <input id="inGitHub" type="url" class="grid-input" value="https://github.com/alexrivera" oninput="syncFormToJson()" />
+                </div>
+              </div>
+            </div>
+
+            <div id="panelJson" style="display: none;">
+              <textarea id="profileJson" class="textarea-field" spellcheck="false" oninput="syncJsonToForm()"></textarea>
+            </div>
           </div>
 
-          <button id="applySubmitBtn" type="submit" class="btn btn-primary">
-            <span>Run Auto-Apply</span>
+          <button id="btnRunApply" type="submit" class="btn-submit">
+            Launch Application
           </button>
         </form>
 
-        <div id="liveConsole" class="console-card" style="display: none;"></div>
+        <div id="liveConsole" class="console-box" style="display: none;"></div>
       </div>
     </section>
 
-    <!-- Right Column: Runs List & Detailed Audit -->
+    <!-- Right Column: Runs & Details -->
     <section>
       <div class="card">
         <div class="card-header">
-          <div class="card-title">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-            Execution Runs & Trace History
-          </div>
-          <button class="btn btn-secondary" onclick="loadRuns()" style="padding: 4px 10px; font-size: 0.75rem;">Refresh</button>
+          <h2 class="card-heading">Execution History</h2>
+          <button type="button" id="btnRefresh" class="btn-action" onclick="fetchRuns()">Refresh</button>
         </div>
 
-        <div id="runsList" class="runs-list">
-          <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 24px;">No runs recorded yet. Trigger an application to see live traces.</div>
+        <div id="runsList" class="runs-container">
+          <div style="text-align: center; color: var(--text-muted); font-size: 0.82rem; padding: 20px;">
+            No runs recorded yet.
+          </div>
         </div>
 
-        <!-- Run Details Panel -->
-        <div id="runDetails" class="details-section" style="display: none;">
-          <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 20px 0;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h4 id="detailRunTitle" style="font-size: 0.95rem; font-weight: 600;">Run Details</h4>
-            <span id="detailStatusBadge" class="run-badge"></span>
+        <!-- Selected Run Detail Panel -->
+        <div id="runDetailPanel" class="detail-panel" style="display: none;">
+          <div class="detail-header-row">
+            <span id="detailRunId" class="run-id-label"></span>
+            <span id="detailBadge" class="badge"></span>
           </div>
 
-          <div id="confirmationBanner" style="display: none; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-sm); padding: 10px; margin-top: 12px; font-size: 0.82rem; color: var(--success);">
-            <strong>Confirmation:</strong> <span id="confirmationText"></span>
+          <!-- Alert Banners -->
+          <div id="bannerSuccess" class="alert-banner alert-success" style="display: none;">
+            <strong>Confirmation:</strong> <span id="bannerSuccessText"></span>
           </div>
 
+          <div id="bannerError" class="alert-banner alert-error" style="display: none;">
+            <div><strong>Step:</strong> <span id="bannerErrorStep"></span></div>
+            <div style="margin-top: 4px;"><strong>Reason:</strong> <span id="bannerErrorReason"></span></div>
+          </div>
 
-          <div style="margin-top: 16px;">
-            <label>Field Fill Receipt:</label>
-            <table class="receipt-table">
+          <!-- Recording Link -->
+          <div id="videoRow" style="display: none; margin-bottom: 12px;">
+            <a id="videoLink" href="#" target="_blank" class="btn-action" style="text-decoration: none; display: inline-block;">
+              View Session Video (.webm)
+            </a>
+          </div>
+
+          <!-- Receipt Table -->
+          <div style="margin-top: 14px;">
+            <label style="font-size: 0.78rem; color: var(--text-muted);">Field Receipt</label>
+            <table class="receipt-tbl">
               <thead><tr><th>Field</th><th>Value Filled</th></tr></thead>
-              <tbody id="receiptTableBody"></tbody>
+              <tbody id="receiptRows"></tbody>
             </table>
           </div>
 
-          <div style="margin-top: 16px;">
-            <label>Action Trace Log:</label>
-            <div id="traceContainer" style="max-height: 220px; overflow-y: auto;"></div>
+          <!-- Trace Items -->
+          <div style="margin-top: 14px;">
+            <label style="font-size: 0.78rem; color: var(--text-muted);">Action Trace & Screenshots</label>
+            <div id="traceRows" style="margin-top: 6px; max-height: 220px; overflow-y: auto;"></div>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- NEEDS_INPUT Interactive Modal -->
-  <div id="needsInputModal" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>
-          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-          Input Required to Proceed
-        </h3>
-        <p>The ATS application requires human input for the following unanswered questions:</p>
-      </div>
+  <!-- Screener Questions Modal -->
+  <div id="screenerModal" class="modal-backdrop">
+    <div class="modal-box">
+      <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 6px;">Questions Required</h3>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px;">
+        Please answer the screener questions below to continue:
+      </p>
 
-      <form id="resumeQuestionsForm">
-        <div id="questionsContainer"></div>
-        <div class="modal-footer">
-          <button type="submit" id="resumeSubmitBtn" class="btn btn-primary" style="width: auto;">
-            Submit Answers & Complete Application
+      <form id="screenerForm">
+        <div id="screenerQuestionsContainer"></div>
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px;">
+          <button type="submit" id="btnSubmitAnswers" class="btn-submit" style="width: auto; padding: 8px 16px;">
+            Submit Answers & Continue
           </button>
         </div>
       </form>
     </div>
   </div>
 
+  <!-- Screenshot Lightbox -->
+  <div id="screenshotModal" class="modal-backdrop" onclick="closeScreenshot(event)">
+    <div class="lightbox-img-box">
+      <div style="padding: 10px 14px; background: #f8fafc; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+        <span id="screenshotTitle" style="font-size: 0.82rem; font-weight: 600;">Field Screenshot</span>
+        <button type="button" class="btn-action" onclick="closeScreenshot()">Close</button>
+      </div>
+      <img id="screenshotImg" class="lightbox-img" src="" alt="Screenshot" />
+    </div>
+  </div>
+
   <script>
-    const defaultProfile = {
+    // Profile State
+    let profileData = {
       personalInfo: {
         fullName: "Alex Morgan Rivera",
         email: "alex.rivera@example.com",
-        phone: "+1-415-555-2671"
+        phone: "+1-415-555-2671",
+        location: "San Francisco, CA"
       },
       profiles: [
         { network: "LinkedIn", url: "https://linkedin.com/in/alexrivera" },
         { network: "GitHub", url: "https://github.com/alexrivera" }
       ],
       experience: [
-        {
-          company: "Stripe",
-          jobTitle: "Senior Staff Engineer",
-          current: true
-        }
+        { company: "Stripe", jobTitle: "Senior Staff Engineer", current: true }
       ],
       education: [
-        {
-          school: "UC Berkeley",
-          degree: "B.S. in Computer Science"
-        }
+        { school: "UC Berkeley", degree: "B.S. in Computer Science" }
       ],
       answersBank: {
-        "Preferred Pronouns": "They/them"
+        "Preferred Pronouns": "They/them",
+        "What is your age range?": "21-29",
+        "What gender do you identify as?": "Male"
       }
     };
 
-    document.getElementById("profileJson").value = JSON.stringify(defaultProfile, null, 2);
+    function updateFormFromState() {
+      document.getElementById("inFullName").value = profileData.personalInfo?.fullName || "";
+      document.getElementById("inEmail").value = profileData.personalInfo?.email || "";
+      document.getElementById("inPhone").value = profileData.personalInfo?.phone || "";
+      document.getElementById("inLocation").value = profileData.personalInfo?.location || "";
+      const li = profileData.profiles?.find(p => p.network.toLowerCase().includes("linkedin"));
+      const gh = profileData.profiles?.find(p => p.network.toLowerCase().includes("github"));
+      document.getElementById("inLinkedIn").value = li ? li.url : "";
+      document.getElementById("inGitHub").value = gh ? gh.url : "";
+      document.getElementById("profileJson").value = JSON.stringify(profileData, null, 2);
+    }
+
+    function syncFormToJson() {
+      profileData.personalInfo.fullName = document.getElementById("inFullName").value;
+      profileData.personalInfo.email = document.getElementById("inEmail").value;
+      profileData.personalInfo.phone = document.getElementById("inPhone").value;
+      profileData.personalInfo.location = document.getElementById("inLocation").value;
+      const liUrl = document.getElementById("inLinkedIn").value;
+      const ghUrl = document.getElementById("inGitHub").value;
+      profileData.profiles = [];
+      if (liUrl) profileData.profiles.push({ network: "LinkedIn", url: liUrl });
+      if (ghUrl) profileData.profiles.push({ network: "GitHub", url: ghUrl });
+      document.getElementById("profileJson").value = JSON.stringify(profileData, null, 2);
+    }
+
+    function syncJsonToForm() {
+      try {
+        profileData = JSON.parse(document.getElementById("profileJson").value);
+        updateFormFromState();
+      } catch (e) {}
+    }
+
+    function setProfileTab(tab) {
+      const pVisual = document.getElementById("panelVisual");
+      const pJson = document.getElementById("panelJson");
+      const bVisual = document.getElementById("tabBtnVisual");
+      const bJson = document.getElementById("tabBtnJson");
+      if (tab === "visual") {
+        syncJsonToForm();
+        pVisual.style.display = "block";
+        pJson.style.display = "none";
+        bVisual.classList.add("active");
+        bJson.classList.remove("active");
+      } else {
+        syncFormToJson();
+        pVisual.style.display = "none";
+        pJson.style.display = "block";
+        bVisual.classList.remove("active");
+        bJson.classList.add("active");
+      }
+    }
+
+    updateFormFromState();
+
+    // ATS Detection
+    function detectAts(url) {
+      const b = document.getElementById("atsBadge");
+      const u = (url || "").toLowerCase();
+      if (u.includes("lever.co") || u.includes("lever")) {
+        b.textContent = "Lever Adapter";
+      } else if (u.includes("greenhouse.io") || u.includes("greenhouse")) {
+        b.textContent = "Greenhouse Adapter";
+      } else if (u.includes("ashbyhq.com") || u.includes("ashby")) {
+        b.textContent = "Ashby Adapter";
+      } else if (u.includes("workable.com") || u.includes("workable")) {
+        b.textContent = "Workable Adapter";
+      } else {
+        b.textContent = "ATS Detector";
+      }
+    }
 
     function setJobUrl(url) {
       document.getElementById("jobUrl").value = url;
+      detectAts(url);
     }
 
-    let activeRunId = null;
+    // Resume Management
+    async function loadResumes() {
+      try {
+        const res = await fetch("/api/resumes");
+        const list = await res.json();
+        const sel = document.getElementById("resumeDropdown");
+        sel.innerHTML = list.map(r => `
+          <option value="${r.path}">${r.name} (${(r.sizeBytes / 1024).toFixed(1)} KB)</option>
+        `).join("");
+
+        const current = document.getElementById("resumePath").value;
+        const found = list.find(r => r.path === current);
+        if (found) {
+          sel.value = current;
+          setResumeDisplay(found.name, found.sizeBytes, found.path);
+        }
+      } catch (e) {
+        console.error("Failed to load resumes", e);
+      }
+    }
+
+    function setResumeDisplay(name, size, path) {
+      document.getElementById("activeResumeTitle").textContent = name;
+      document.getElementById("activeResumeMeta").textContent = `${(size / 1024).toFixed(1)} KB • Ready for ATS upload`;
+      document.getElementById("resumePath").value = path;
+    }
+
+    function onSelectResume(path) {
+      const sel = document.getElementById("resumeDropdown");
+      const opt = sel.options[sel.selectedIndex];
+      document.getElementById("resumePath").value = path;
+      document.getElementById("activeResumeTitle").textContent = opt.text.split(" (")[0];
+    }
+
+    // Drag and Drop Upload on Resume Card
+    const dropCard = document.getElementById("resumeDropCard");
+    dropCard.addEventListener("dragover", (e) => { e.preventDefault(); dropCard.classList.add("drag-target"); });
+    dropCard.addEventListener("dragleave", () => { dropCard.classList.remove("drag-target"); });
+    dropCard.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropCard.classList.remove("drag-target");
+      if (e.dataTransfer.files?.length > 0) uploadResumeFile(e.dataTransfer.files);
+    });
+
+    async function uploadResumeFile(files) {
+      if (!files || files.length === 0) return;
+      const file = files[0];
+      if (!file.name.toLowerCase().endsWith(".pdf")) {
+        alert("Please upload a valid PDF document (.pdf).");
+        return;
+      }
+      logConsole(`Uploading resume: ${file.name}...`);
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          const res = await fetch("/api/upload-resume", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ fileName: file.name, fileData: reader.result })
+          });
+          const data = await res.json();
+          if (data.success) {
+            logConsole(`Resume uploaded: ${data.fileName}`);
+            await loadResumes();
+            setResumeDisplay(data.fileName, data.sizeBytes, data.path);
+          } else {
+            alert(data.error || "Upload failed");
+          }
+        } catch (err) {
+          alert(`Error uploading: ${err.message}`);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Runs and Selection
+    let currentSelectedRunId = null;
 
     function logConsole(msg) {
       const el = document.getElementById("liveConsole");
@@ -723,166 +1114,186 @@
       el.scrollTop = el.scrollHeight;
     }
 
-    // Load and render all runs
-    async function loadRuns() {
+    async function fetchRuns() {
+      const btn = document.getElementById("btnRefresh");
+      if (btn) btn.textContent = "Refreshing...";
       try {
         const res = await fetch("/api/runs");
         const runs = await res.json();
         const container = document.getElementById("runsList");
-
         if (!runs || runs.length === 0) {
-          container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 24px;">No runs recorded yet.</div>`;
+          container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.82rem; padding: 20px;">No runs recorded yet.</div>`;
           return;
         }
 
-        container.innerHTML = runs.map(run => `
-          <div class="run-item ${activeRunId === run.runId ? 'active' : ''}" onclick="selectRun('${run.runId}')">
-            <div class="run-item-header">
-              <span class="run-id">${run.runId}</span>
-              <span class="run-badge badge-${run.state}">${run.state}</span>
+        // Newest runs first
+        runs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        container.innerHTML = runs.map(r => `
+          <div class="run-card ${currentSelectedRunId === r.runId ? 'selected' : ''}" onclick="selectRun('${r.runId}')">
+            <div class="run-card-top">
+              <span class="run-id-label">${r.runId}</span>
+              <span class="badge badge-${r.state}">${r.state}</span>
             </div>
-            <div class="run-meta">
-              <span>Adapter: ${run.adapterName}</span>
-              <span>${new Date(run.createdAt).toLocaleTimeString()}</span>
+            <div class="run-card-bottom">
+              <span>Adapter: <strong>${r.adapterName}</strong></span>
+              <span>${new Date(r.createdAt).toLocaleTimeString()}</span>
             </div>
           </div>
         `).join("");
       } catch (err) {
-        console.error("Error loading runs:", err);
+        console.error("Runs load error:", err);
+      } finally {
+        if (btn) btn.textContent = "Refresh";
       }
     }
 
     async function selectRun(runId) {
-      activeRunId = runId;
-      loadRuns();
+      currentSelectedRunId = runId;
+      fetchRuns();
       try {
         const res = await fetch(`/api/runs/${runId}`);
         const run = await res.json();
         if (!run) return;
 
-        const detailsPanel = document.getElementById("runDetails");
-        detailsPanel.style.display = "block";
-        document.getElementById("detailRunTitle").textContent = `Run: ${run.runId}`;
-        
-        const badge = document.getElementById("detailStatusBadge");
+        const panel = document.getElementById("runDetailPanel");
+        panel.style.display = "block";
+        document.getElementById("detailRunId").textContent = run.runId;
+
+        const badge = document.getElementById("detailBadge");
         badge.textContent = run.state;
-        badge.className = `run-badge badge-${run.state}`;
+        badge.className = `badge badge-${run.state}`;
 
-        // Confirmation Text
-        const confBanner = document.getElementById("confirmationBanner");
-        if (run.confirmationText) {
-          confBanner.style.display = "block";
-          document.getElementById("confirmationText").textContent = run.confirmationText;
+        // Banners
+        const sBanner = document.getElementById("bannerSuccess");
+        const eBanner = document.getElementById("bannerError");
+        if (run.state === "SUBMITTED" && run.confirmationText) {
+          sBanner.style.display = "block";
+          document.getElementById("bannerSuccessText").textContent = run.confirmationText;
         } else {
-          confBanner.style.display = "none";
+          sBanner.style.display = "none";
         }
 
-        // Receipt table
-        const tbody = document.getElementById("receiptTableBody");
+        if (run.state === "FAILED") {
+          eBanner.style.display = "block";
+          document.getElementById("bannerErrorStep").textContent = run.failedStep || "open_form";
+          document.getElementById("bannerErrorReason").textContent = run.error || "Submission could not complete.";
+        } else {
+          eBanner.style.display = "none";
+        }
+
+        // Video
+        const vRow = document.getElementById("videoRow");
+        const vLink = document.getElementById("videoLink");
+        if (run.recordingVideoPath) {
+          vRow.style.display = "block";
+          const fn = run.recordingVideoPath.split("/").pop();
+          vLink.href = `/recordings/${run.runId}/${fn}`;
+        } else {
+          vRow.style.display = "none";
+        }
+
+        // Receipt
+        const rTbody = document.getElementById("receiptRows");
         if (run.receipt && Object.keys(run.receipt).length > 0) {
-          tbody.innerHTML = Object.entries(run.receipt).map(([f, v]) => `
-            <tr><td>${f}</td><td>${v}</td></tr>
+          rTbody.innerHTML = Object.entries(run.receipt).map(([k, v]) => `
+            <tr><td>${k}</td><td>${v}</td></tr>
           `).join("");
         } else {
-          tbody.innerHTML = `<tr><td colspan="2" style="color: var(--text-muted);">No receipt generated yet.</td></tr>`;
+          rTbody.innerHTML = `<tr><td colspan="2" style="color: var(--text-muted); padding: 8px;">No receipt data.</td></tr>`;
         }
 
-        // Trace history
-        const traceBox = document.getElementById("traceContainer");
+        // Trace
+        const tBox = document.getElementById("traceRows");
         if (run.trace && run.trace.length > 0) {
-          traceBox.innerHTML = run.trace.map(t => `
-            <div class="trace-item">
-              <div>
-                <strong>${t.field}</strong>: ${t.value}
-                <div style="font-size: 0.68rem; color: var(--text-muted);">${new Date(t.timestamp).toLocaleTimeString()}</div>
+          tBox.innerHTML = run.trace.map(t => {
+            let scBtn = "";
+            if (t.screenshotPath) {
+              const fn = t.screenshotPath.split("/").pop();
+              const u = `/recordings/${run.runId}/${fn}`;
+              scBtn = `<button type="button" class="btn-screenshot" onclick="openScreenshot('${u}', '${t.field}')">Screenshot</button>`;
+            }
+            return `
+              <div class="trace-row">
+                <div>
+                  <strong style="color: var(--text-main);">${t.field}</strong>: <span>${t.value}</span>
+                  <div style="font-size: 0.68rem; color: var(--text-muted);">${new Date(t.timestamp).toLocaleTimeString()}</div>
+                </div>
+                ${scBtn}
               </div>
-            </div>
-          `).join("");
+            `;
+          }).join("");
         } else {
-          traceBox.innerHTML = `<div style="color: var(--text-muted); font-size: 0.8rem;">No actions traced.</div>`;
+          tBox.innerHTML = `<div style="color: var(--text-muted); font-size: 0.76rem; padding: 8px;">No field traces recorded.</div>`;
         }
       } catch (err) {
-        console.error("Error showing run details:", err);
+        console.error("Error displaying run:", err);
       }
     }
 
-    // -----------------------------------------------------------------
-    // Persistent Server-Sent Events (SSE) Stream - Single EventSource, Zero Polling!
-    // -----------------------------------------------------------------
-    const sseSource = new EventSource("/api/events");
+    // Lightbox
+    function openScreenshot(url, field) {
+      document.getElementById("screenshotImg").src = url;
+      document.getElementById("screenshotTitle").textContent = `Field Screenshot: ${field}`;
+      document.getElementById("screenshotModal").classList.add("active");
+    }
 
-    sseSource.onmessage = (event) => {
+    function closeScreenshot(e) {
+      if (!e || e.target.id === "screenshotModal" || e.target.tagName === "BUTTON") {
+        document.getElementById("screenshotModal").classList.remove("active");
+      }
+    }
+
+    // SSE Stream
+    const sse = new EventSource("/api/events");
+    sse.onmessage = (event) => {
       try {
         const payload = JSON.parse(event.data);
-        if (!payload || !payload.type) return;
-
-        if (payload.type === "connected") {
-          console.log("[SSE] Connected to event stream at", payload.timestamp);
-          return;
-        }
-
+        if (!payload?.type || payload.type === "connected") return;
         const { type, runId, data } = payload;
 
         if (type === "run_created") {
-          logConsole(`[Run Created] ${runId} for ${data.jobUrl}`);
-          activeRunId = runId;
-          loadRuns();
+          logConsole(`[Run Created] ${runId}`);
+          currentSelectedRunId = runId;
+          fetchRuns();
           selectRun(runId);
         } else if (type === "step") {
           logConsole(`[Step: ${data.step}] ${data.message || ""}`);
         } else if (type === "trace") {
           logConsole(`[Filled] ${data.field}: ${data.value}`);
-          if (activeRunId === runId) {
-            const traceBox = document.getElementById("traceContainer");
-            const item = document.createElement("div");
-            item.className = "trace-item";
-            item.innerHTML = `
-              <div>
-                <strong>${data.field}</strong>: ${data.value}
-                <div style="font-size: 0.68rem; color: var(--text-muted);">${new Date(data.timestamp).toLocaleTimeString()}</div>
-              </div>
-            `;
-            traceBox.appendChild(item);
-          }
+          if (currentSelectedRunId === runId) selectRun(runId);
         } else if (type === "needs_input") {
-          logConsole(`[Paused] Run ${runId} requires user input for ${data.questions.length} questions.`);
-          openNeedsInputModal(runId, data.questions);
-          loadRuns();
+          logConsole(`[Paused] Input required for ${data.questions.length} questions.`);
+          showScreenerModal(runId, data.questions);
+          fetchRuns();
           selectRun(runId);
-        } else if (type === "resumed") {
-          logConsole(`[Resumed] Run ${runId} resumed with answers.`);
         } else if (type === "submitted") {
-          logConsole(`[Submitted] Run ${runId} completed successfully!`);
-          loadRuns();
+          logConsole(`[Submitted] Application completed!`);
+          fetchRuns();
           selectRun(runId);
         } else if (type === "failed") {
-          logConsole(`[Failed] Run ${runId} failed at ${data.step}: ${data.error}`);
-          loadRuns();
+          logConsole(`[Failed] ${data.error}`);
+          fetchRuns();
           selectRun(runId);
         }
-      } catch (err) {
-        console.error("SSE message parse error:", err);
-      }
+      } catch (e) {}
     };
 
     // Apply Form Handler
     document.getElementById("applyForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const submitBtn = document.getElementById("applySubmitBtn");
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<div class="spinner"></div><span>Running Application...</span>`;
+      const btn = document.getElementById("btnRunApply");
+      btn.disabled = true;
+      btn.textContent = "Processing Application...";
 
-      const liveConsole = document.getElementById("liveConsole");
-      liveConsole.textContent = "";
-      logConsole("Launching autonomous application flow...");
-
+      syncFormToJson();
       let profile;
       try {
         profile = JSON.parse(document.getElementById("profileJson").value);
       } catch (err) {
-        alert("Invalid JSON in Candidate Profile!");
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = "<span>Run Auto-Apply</span>";
+        alert("Invalid JSON format in profile.");
+        btn.disabled = false;
+        btn.textContent = "Launch Application";
         return;
       }
 
@@ -890,126 +1301,114 @@
       const resumePath = document.getElementById("resumePath").value;
 
       try {
-        logConsole(`Navigating to ${jobUrl}...`);
+        logConsole(`Starting application for: ${jobUrl}`);
         const res = await fetch("/api/apply", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ jobUrl, profile, resumePath })
         });
         const result = await res.json();
-        logConsole(`Result status: ${result.status}`);
+        logConsole(`Result: ${result.status}`);
 
-        await loadRuns();
-
+        await fetchRuns();
         if (result.status === "NEEDS_INPUT") {
-          logConsole(`Application paused: ${result.questions.length} questions require input.`);
-          openNeedsInputModal(result.runId, result.questions);
-        } else if (result.status === "SUBMITTED") {
-          logConsole(`Application submitted successfully!`);
+          showScreenerModal(result.runId, result.questions);
+        } else if (result.runId) {
           selectRun(result.runId);
-        } else {
-          logConsole(`Application failed: ${result.error} (step: ${result.step})`);
-          if (result.runId) selectRun(result.runId);
         }
       } catch (err) {
-        logConsole(`Network / Server error: ${err.message}`);
+        logConsole(`Error: ${err.message}`);
       } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = "<span>Run Auto-Apply</span>";
+        btn.disabled = false;
+        btn.textContent = "Launch Application";
       }
     });
 
-    let modalPendingRunId = null;
+    // Screener Modal
+    let pendingRunId = null;
 
-    function openNeedsInputModal(runId, questions) {
-      modalPendingRunId = runId;
-      const modal = document.getElementById("needsInputModal");
-      const container = document.getElementById("questionsContainer");
+    function showScreenerModal(runId, questions) {
+      pendingRunId = runId;
+      const modal = document.getElementById("screenerModal");
+      const c = document.getElementById("screenerQuestionsContainer");
 
-      container.innerHTML = questions.map(q => {
+      c.innerHTML = questions.map(q => {
         let inputHtml = "";
         if (q.type === "select" && q.options) {
           inputHtml = `
-            <select name="${q.id}" class="select-field" ${q.required ? 'required' : ''}>
+            <select name="${q.id}" class="input-field" ${q.required ? 'required' : ''}>
               <option value="">Select an option...</option>
-              ${q.options.map(opt => `<option value="${opt}">${opt}</option>`).join("")}
+              ${q.options.map(o => `<option value="${o}">${o}</option>`).join("")}
             </select>
           `;
         } else if (q.type === "radio" && q.options) {
           inputHtml = `
-            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
-              ${q.options.map(opt => `
-                <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; color: var(--text-primary);">
-                  <input type="radio" name="${q.id}" value="${opt}" ${q.required ? 'required' : ''}>
-                  ${opt}
+            <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 4px;">
+              ${q.options.map(o => `
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 0.8rem;">
+                  <input type="radio" name="${q.id}" value="${o}" ${q.required ? 'required' : ''}>
+                  ${o}
                 </label>
               `).join("")}
             </div>
           `;
         } else if (q.type === "textarea") {
-          inputHtml = `<textarea name="${q.id}" class="textarea-field" style="min-height: 80px;" ${q.required ? 'required' : ''}></textarea>`;
+          inputHtml = `<textarea name="${q.id}" class="input-field" style="min-height: 70px;" ${q.required ? 'required' : ''}></textarea>`;
         } else {
           inputHtml = `<input type="${q.type === 'number' ? 'number' : 'text'}" name="${q.id}" class="input-field" ${q.required ? 'required' : ''} />`;
         }
 
         return `
-          <div class="form-group" style="margin-bottom: 16px;">
-            <label>
-              ${q.label} ${q.required ? '<span style="color: var(--danger);">*</span>' : ''}
-              ${q.note ? `<span style="font-size: 0.72rem; color: var(--text-muted); display: block;">${q.note}</span>` : ''}
+          <div style="margin-bottom: 14px;">
+            <label style="display: block; margin-bottom: 4px; font-size: 0.82rem;">
+              ${q.label} ${q.required ? '<span style="color: var(--status-error-text);">*</span>' : ''}
             </label>
             ${inputHtml}
           </div>
         `;
       }).join("");
 
-      modal.classList.add("open");
+      modal.classList.add("active");
     }
 
-    document.getElementById("resumeQuestionsForm").addEventListener("submit", async (e) => {
+    document.getElementById("screenerForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const form = e.target;
       const formData = new FormData(form);
       const answers = {};
-
-      for (const [key, value] of formData.entries()) {
-        answers[key] = value;
+      for (const [k, v] of formData.entries()) {
+        answers[k] = v;
       }
 
-      const submitBtn = document.getElementById("resumeSubmitBtn");
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<div class="spinner"></div><span>Resuming & Submitting...</span>`;
+      const btn = document.getElementById("btnSubmitAnswers");
+      btn.disabled = true;
+      btn.textContent = "Submitting...";
 
       try {
-        logConsole(`Resuming application run ${modalPendingRunId} with user answers...`);
+        logConsole(`Resuming application run ${pendingRunId} with answers...`);
         const res = await fetch("/api/resume", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ runId: modalPendingRunId, answers })
+          body: JSON.stringify({ runId: pendingRunId, answers })
         });
         const result = await res.json();
         logConsole(`Resume result: ${result.status}`);
 
-        document.getElementById("needsInputModal").classList.remove("open");
-        await loadRuns();
-
-        if (result.status === "SUBMITTED") {
-          logConsole("Submission finalized!");
-          selectRun(result.runId);
-        } else {
-          logConsole(`Failed: ${result.error}`);
-          if (result.runId) selectRun(result.runId);
-        }
+        document.getElementById("screenerModal").classList.remove("active");
+        await fetchRuns();
+        if (result.runId) selectRun(result.runId);
       } catch (err) {
-        logConsole(`Error resuming: ${err.message}`);
+        logConsole(`Error: ${err.message}`);
       } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = "Submit Answers & Complete Application";
+        btn.disabled = false;
+        btn.textContent = "Submit Answers & Continue";
       }
     });
 
-    // Initial load
-    loadRuns();
+    // Init
+    fetchRuns();
+    loadResumes();
+    detectAts(document.getElementById("jobUrl").value);
   </script>
 </body>
 </html>

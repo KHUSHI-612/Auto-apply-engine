@@ -18,8 +18,8 @@ function parseJsonBody<T>(req: http.IncomingMessage): Promise<T> {
     let raw = "";
     req.on("data", (chunk) => {
       raw += chunk;
-      if (raw.length > 5 * 1024 * 1024) {
-        reject(new Error("Request body too large"));
+      if (raw.length > 25 * 1024 * 1024) {
+        reject(new Error("Request body too large (max 25MB)"));
       }
     });
     req.on("end", () => {
@@ -549,6 +549,95 @@ const server = http.createServer(async (req, res) => {
     if ((method === "GET" && pathname === "/") || pathname === "/index.html") {
       const indexPath = path.join(PUBLIC_DIR, "index.html");
       serveStaticFile(res, indexPath);
+      return;
+    }
+
+    // Static Assets: Trace Recordings (.webm videos & .png screenshots)
+    if (method === "GET" && pathname.startsWith("/recordings/")) {
+      const relPath = pathname.replace(/^\/recordings\//, "");
+      const safePath = path.normalize(relPath).replace(/^(\.\.[\/\\])+/, "");
+      const fullPath = path.join(process.cwd(), "recordings", safePath);
+      serveStaticFile(res, fullPath);
+      return;
+    }
+
+    // Static Assets: Uploaded Resumes
+    if (method === "GET" && pathname.startsWith("/uploads/")) {
+      const relPath = pathname.replace(/^\/uploads\//, "");
+      const safePath = path.normalize(relPath).replace(/^(\.\.[\/\\])+/, "");
+      const fullPath = path.join(process.cwd(), "uploads", safePath);
+      serveStaticFile(res, fullPath);
+      return;
+    }
+
+    // -------------------------------------------------------------
+    // Resume Management APIs: Upload & List Available Resumes
+    // -------------------------------------------------------------
+    if (method === "GET" && pathname === "/api/resumes") {
+      const list: Array<{ name: string; path: string; isDefault: boolean; sizeBytes: number; uploadedAt?: string }> = [];
+      const defaultResume = path.join(process.cwd(), "sample_resume.pdf");
+      if (fs.existsSync(defaultResume)) {
+        list.push({
+          name: "sample_resume.pdf (Default)",
+          path: "./sample_resume.pdf",
+          isDefault: true,
+          sizeBytes: fs.statSync(defaultResume).size,
+        });
+      }
+      const uploadsDir = path.join(process.cwd(), "uploads");
+      if (fs.existsSync(uploadsDir)) {
+        const files = fs.readdirSync(uploadsDir).filter((f) => f.endsWith(".pdf"));
+        for (const f of files) {
+          const fp = path.join(uploadsDir, f);
+          const stat = fs.statSync(fp);
+          list.push({
+            name: f.replace(/^resume_\d+_/, ""),
+            path: `./uploads/${f}`,
+            isDefault: false,
+            sizeBytes: stat.size,
+            uploadedAt: stat.mtime.toISOString(),
+          });
+        }
+      }
+      sendJson(res, 200, list);
+      return;
+    }
+
+    if (method === "POST" && pathname === "/api/upload-resume") {
+      const body = await parseJsonBody<{
+        fileName: string;
+        fileData: string;
+      }>(req);
+
+      if (!body.fileName || !body.fileData) {
+        sendJson(res, 400, { error: "Missing required fields: 'fileName' and 'fileData' (base64) are required." });
+        return;
+      }
+
+      const uploadsDir = path.join(process.cwd(), "uploads");
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+
+      const sanitizedName = body.fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const timestamp = Date.now();
+      const savedFileName = `resume_${timestamp}_${sanitizedName}`;
+      const savedFilePath = path.join(uploadsDir, savedFileName);
+      const relativePath = `./uploads/${savedFileName}`;
+
+      const base64Clean = body.fileData.replace(/^data:application\/pdf;base64,/, "").replace(/^data:.*?;base64,/, "");
+      const buffer = Buffer.from(base64Clean, "base64");
+      fs.writeFileSync(savedFilePath, buffer);
+
+      console.log(`[Server] Uploaded resume saved: ${savedFilePath} (${buffer.length} bytes)`);
+
+      sendJson(res, 200, {
+        success: true,
+        fileName: body.fileName,
+        path: relativePath,
+        sizeBytes: buffer.length,
+        url: `/uploads/${savedFileName}`,
+      });
       return;
     }
 

@@ -75,6 +75,17 @@ export const greenhouseAdapter: AtsAdapter = {
 
     await page.goto(jobUrl, { waitUntil: "domcontentloaded" });
 
+    // Check if the job URL redirected to a general careers/open-positions directory (indicates posting closed)
+    const currentUrl = page.url();
+    if (
+      currentUrl.includes("/open-positions") ||
+      (currentUrl.includes("/careers") && !currentUrl.includes("jobs") && !currentUrl.includes("gh_jid") && !currentUrl.includes("-8"))
+    ) {
+      throw new Error(
+        `Job posting is closed: target URL redirected to careers directory (${currentUrl}). Databricks/Greenhouse has expired this requisition.`
+      );
+    }
+
     // Greenhouse postings can be standalone pages or embedded in company career portals.
     // If the form is embedded in an iframe (e.g. grnhse_iframe), wait for either form or iframe.
     const formSelector = "#application-form, form#application_form, form.application--form";
@@ -109,6 +120,9 @@ export const greenhouseAdapter: AtsAdapter = {
         const applyBtn = page.locator(selector).first();
         if (await applyBtn.isVisible().catch(() => false)) {
           await applyBtn.click();
+          // Allow dynamic iframe or form to mount
+          await page.waitForTimeout(1500);
+          await page.waitForSelector(`${formSelector}, ${iframeSelector}`, { state: "attached", timeout: 15000 }).catch(() => {});
           break;
         }
       }
