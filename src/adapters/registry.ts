@@ -1,7 +1,18 @@
 import type { AtsAdapter } from "../types.js";
 import { leverAdapter } from "./lever.js";
+import { greenhouseAdapter } from "./greenhouse.js";
 
-const adapters: AtsAdapter[] = [leverAdapter];
+export interface AdapterRegistration {
+  hostIncludes: string;
+  adapter: AtsAdapter;
+}
+
+const registeredAdapters: AdapterRegistration[] = [
+  { hostIncludes: "lever.co", adapter: leverAdapter },
+  { hostIncludes: "greenhouse.io", adapter: greenhouseAdapter },
+];
+
+const adapters: AtsAdapter[] = [leverAdapter, greenhouseAdapter];
 
 /**
  * Registers an ATS adapter with the registry.
@@ -45,6 +56,23 @@ export function detectAdapter(jobUrl: string): AtsAdapter {
       if (adapter) return adapter;
     }
 
+    // Greenhouse ATS: job-boards.greenhouse.io / boards.greenhouse.io (or localhost mock endpoints)
+    if (
+      hostname === "greenhouse.io" ||
+      hostname.endsWith(".greenhouse.io") ||
+      ((hostname === "localhost" || hostname === "127.0.0.1") && (jobUrl.includes("greenhouse.io") || jobUrl.includes("greenhouse")))
+    ) {
+      const adapter = adapters.find((a) => a.name === "greenhouse");
+      if (adapter) return adapter;
+    }
+
+    // Host matching against registered adapters
+    for (const reg of registeredAdapters) {
+      if (hostname.includes(reg.hostIncludes) || jobUrl.includes(reg.hostIncludes)) {
+        return reg.adapter;
+      }
+    }
+
     // Additional ATS domain checks can be registered here in the future
     for (const adapter of adapters) {
       if (hostname.includes(adapter.name.toLowerCase())) {
@@ -53,8 +81,17 @@ export function detectAdapter(jobUrl: string): AtsAdapter {
     }
   } catch {
     // If URL parsing fails, check substring matches
+    for (const reg of registeredAdapters) {
+      if (jobUrl.includes(reg.hostIncludes)) {
+        return reg.adapter;
+      }
+    }
     if (jobUrl.includes("lever.co")) {
       const adapter = adapters.find((a) => a.name === "lever");
+      if (adapter) return adapter;
+    }
+    if (jobUrl.includes("greenhouse.io")) {
+      const adapter = adapters.find((a) => a.name === "greenhouse");
       if (adapter) return adapter;
     }
   }
