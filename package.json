@@ -17,10 +17,12 @@
   "keywords": ["playwright", "ats", "job-application", "lever"],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "@types/node": "^20.11.0",
+  "dependencies": {
     "playwright": "^1.42.0",
     "tsx": "^4.7.1",
     "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0"
   }
 }
